@@ -1,6 +1,6 @@
 package ua.com.alevel.config;
 
-import org.apache.commons.collections4.CollectionUtils;
+//import org.apache.commons.collections4.CollectionUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,23 +8,24 @@ import java.util.*;
 
 public class ApplicationStarter {
 
-    private final Map<Class, Object> controllerMap;
+    private final Collection<Object> controllers;
 
-    public ApplicationStarter(Map<Class, Object> controllerMap) {
-        this.controllerMap = controllerMap;
+    public ApplicationStarter(Collection<Object> controllers) {
+        this.controllers = controllers;
     }
 
     public void start() {
-        controllerMap.forEach((key, value) -> {
-            for (Method method : value.getClass().getMethods()) {
+        for (Object controller : this.controllers) {
+            Method[] methods = controller.getClass().getMethods();
+            for (Method method : methods) {
                 if (method.getName().equals("start")) {
                     try {
-                        method.invoke(value);
+                        method.invoke(controller);
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace();
                     }
                 }
             }
-        });
+        }
     }
 }

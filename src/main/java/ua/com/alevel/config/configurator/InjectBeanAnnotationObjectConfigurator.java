@@ -5,7 +5,7 @@ import ua.com.alevel.config.annotation.InjectBean;
 
 import java.lang.reflect.Field;
 
-public class BeanClassAnnotationObjectConfigurator implements ObjectConfigurator {
+public class InjectBeanAnnotationObjectConfigurator implements ObjectConfigurator {
 
     @Override
     public void configure(Object o, ApplicationContext context) {

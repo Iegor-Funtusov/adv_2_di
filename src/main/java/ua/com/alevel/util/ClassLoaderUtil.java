@@ -9,10 +9,15 @@ import java.util.List;
 
 public class ClassLoaderUtil {
 
+    private static final String CLASS_TYPE = ".class";
+    private static final String DOT_STRING = ".";
+    private static final char DOT_CHAR = '.';
+    private static final char SLASH_CHAR = '/';
+
     public static List<Class> getClasses(String packageName) throws ClassNotFoundException, IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         assert classLoader != null;
-        String path = packageName.replace('.', '/');
+        String path = packageName.replace(DOT_CHAR, SLASH_CHAR);
         Enumeration<URL> resources = classLoader.getResources(path);
         List<File> dirs = new ArrayList<>();
         while (resources.hasMoreElements()) {
@@ -34,10 +39,10 @@ public class ClassLoaderUtil {
         File[] files = directory.listFiles();
         for (File file : files) {
             if (file.isDirectory()) {
-                assert !file.getName().contains(".");
-                classes.addAll(findClasses(file, packageName + "." + file.getName()));
-            } else if (file.getName().endsWith(".class")) {
-                classes.add(Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
+                assert !file.getName().contains(DOT_STRING);
+                classes.addAll(findClasses(file, packageName + DOT_STRING + file.getName()));
+            } else if (file.getName().endsWith(CLASS_TYPE)) {
+                classes.add(Class.forName(packageName + DOT_STRING + file.getName().substring(0, file.getName().length() - CLASS_TYPE.length())));
             }
         }
         return classes;

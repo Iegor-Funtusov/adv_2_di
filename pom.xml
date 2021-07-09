@@ -11,29 +11,42 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <commons.lang.version>3.12.0</commons.lang.version>
+        <reflections.version>0.9.12</reflections.version>
+        <mysql.version>8.0.25</mysql.version>
+        <jsr250.version>1.0</jsr250.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.25</version>
-        </dependency>
+
+        <!-- REFLECTIONS -->
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.9.12</version>
+            <version>${reflections.version}</version>
         </dependency>
+
+        <!-- APACHE -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons.lang.version}</version>
+        </dependency>
+
+        <!-- MYSQL -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+
+        <!-- JSR250 -->
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>jsr250-api</artifactId>
-            <version>1.0</version>
+            <version>${jsr250.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>4.4</version>
-        </dependency>
+
     </dependencies>
 
 </project>

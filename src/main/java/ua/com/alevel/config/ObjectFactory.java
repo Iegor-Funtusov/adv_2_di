@@ -1,10 +1,9 @@
 package ua.com.alevel.config;
 
 import ua.com.alevel.config.configurator.ObjectConfigurator;
+import ua.com.alevel.config.invoker.ObjectInvoker;
 
-import javax.annotation.PostConstruct;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -12,20 +11,13 @@ import java.util.Set;
 public class ObjectFactory {
 
     private final ApplicationContext context;
-    private final List<ObjectConfigurator> objectConfigurators;
+    private final List<ObjectConfigurator> objectConfigurators = new ArrayList<>();
+    private final List<ObjectInvoker> objectInvokers = new ArrayList<>();
 
     public ObjectFactory(ApplicationContext context) {
-        this.objectConfigurators = new ArrayList<>();
         this.context = context;
-
-        Set<Class<? extends ObjectConfigurator>> subTypesOf = this.context.getApplicationSearcher().getScanner().getSubTypesOf(ObjectConfigurator.class);
-        for (Class<? extends ObjectConfigurator> aClass : subTypesOf) {
-            try {
-                objectConfigurators.add(aClass.getDeclaredConstructor().newInstance());
-            } catch (Exception e) {
-                throw new RuntimeException(e.getMessage());
-            }
-        }
+        initObjectConfiguratorList();
+        initObjectInvokerList();
     }
 
     public <I> I createObject(Class<I> impl) {
@@ -53,11 +45,30 @@ public class ObjectFactory {
         objectConfigurators.forEach(objectConfigurator -> objectConfigurator.configure(i, context));
     }
 
-    private <I> void invoke(Class<I> type, I i) throws IllegalAccessException, InvocationTargetException {
-        for (Method method : type.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(PostConstruct.class)) {
-                method.setAccessible(true);
-                method.invoke(i);
+    private <I> void invoke(Class<I> type, I i) {
+        objectInvokers.forEach(objectInvoker -> objectInvoker.invoke(type, i));
+    }
+
+    private void initObjectConfiguratorList() {
+        Set<Class<? extends ObjectConfigurator>> subTypesOfObjectConfigurator =
+                this.context.getApplicationSearcher().getScanner().getSubTypesOf(ObjectConfigurator.class);
+        for (Class<? extends ObjectConfigurator> aClass : subTypesOfObjectConfigurator) {
+            try {
+                objectConfigurators.add(aClass.getDeclaredConstructor().newInstance());
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        }
+    }
+
+    private void initObjectInvokerList() {
+        Set<Class<? extends ObjectInvoker>> subTypesOfObjectInvoker =
+                this.context.getApplicationSearcher().getScanner().getSubTypesOf(ObjectInvoker.class);
+        for (Class<? extends ObjectInvoker> aClass : subTypesOfObjectInvoker) {
+            try {
+                objectInvokers.add(aClass.getDeclaredConstructor().newInstance());
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
             }
         }
     }

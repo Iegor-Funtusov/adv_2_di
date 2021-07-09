@@ -1,5 +1,6 @@
 package ua.com.alevel.config.configurator;
 
+import org.apache.commons.lang3.StringUtils;
 import ua.com.alevel.config.ApplicationContext;
 import ua.com.alevel.config.annotation.DbProps;
 import ua.com.alevel.util.ResourceUtil;
@@ -18,7 +19,7 @@ public class DbPropsAnnotationObjectConfigurator implements ObjectConfigurator {
                 DbProps dbProps = declaredField.getAnnotation(DbProps.class);
                 String value = dbProps.value();
                 String props = map.get(value);
-                if (props != null) {
+                if (StringUtils.isNotBlank(props)) {
                     declaredField.setAccessible(true);
                     try {
                         declaredField.set(o, props);
